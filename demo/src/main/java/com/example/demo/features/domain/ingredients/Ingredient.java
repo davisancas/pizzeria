@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.UUID;
 
-import com.example.demo.features.core.EntityBase;
+import com.example.demo.features.core.AgregateBase;
 
-public class Ingredient extends EntityBase{
+public class Ingredient extends AgregateBase{
 
     private String name;
     private BigDecimal cost;
@@ -17,8 +17,9 @@ public class Ingredient extends EntityBase{
         this.cost = Objects.requireNonNull(cost, "cost");
     }
 
+    //Para creación desde el servicio de coordinación
     public static Ingredient create(UUID id, String name, BigDecimal cost){
-        return new Ingredient(id, name, cost);
+        return new Ingredient(id, name, cost);  
     }
     
     public void update(String name, BigDecimal cost) {
@@ -34,7 +35,11 @@ public class Ingredient extends EntityBase{
         return cost;
     }
 
-    
+    //Para recuperación de JPA
+    public static Ingredient hydrate(UUID id, String name, BigDecimal cost){
+        return new Ingredient(id, name, cost);
+        //Para recuperación de JPA
+    }
 
 }
 

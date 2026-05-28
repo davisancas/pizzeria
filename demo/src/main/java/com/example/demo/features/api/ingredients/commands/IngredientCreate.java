@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.features.core.infraestructure.IAddJpa;
 import com.example.demo.features.domain.ingredients.Ingredient;
-import com.example.demo.features.domain.ingredients.IngredientRepository;
+import com.example.demo.features.infraestructure.ingredient.IngredientJpa;
 
 public class IngredientCreate {
 
@@ -38,22 +39,21 @@ public class IngredientCreate {
 
     @Service
     public static class ServicioImpl implements Servicio {
-        
-        private final IngredientRepository repository;
+        private final IAddJpa<Ingredient, UUID, IngredientJpa> repository;
 
-        public ServicioImpl(IngredientRepository repository) {
+        public ServicioImpl(IAddJpa<Ingredient, UUID, IngredientJpa> repository) {
             this.repository = repository;
         }
 
         @Override
         public Response addIngredient(Request request) {
-            Ingredient ingredient = new Ingredient(UUID.randomUUID(), request.name, request.cost);
-            Ingredient saved = repository.save(ingredient);
-            return new Response(saved.getId(), saved.getName(), saved.getCost());
+            var ingredient = Ingredient.create(UUID.randomUUID(), request.name(), request.cost());
+            repository.add(ingredient);
+            return new Response(ingredient.getId());
         }
     }
 
     public record Request(String name, BigDecimal cost) { }
 
-    public record Response(UUID id, String name, BigDecimal cost) { }
+    public record Response(UUID id) { }
 }
